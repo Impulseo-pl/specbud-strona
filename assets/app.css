@@ -333,3 +333,44 @@ footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:
 .blok--sam-tekst .blok-tresc p,.blok--sam-tekst .lista-spec{max-width:min(100%,58ch)}
 .spec-linia{margin-top:var(--o3)}
 .lista-spec li>span:first-child{font-weight:600}
+
+/* ── OTWARCIA PODSTRON ────────────────────────────────────────────────────────
+   Każda podstrona ma własny pierwszy ekran i własny komponent prowadzący — ten sam
+   język graficzny, inny rytm (decyzja K. 31.08 wieczorem: „nie muszą wyglądać tak samo").
+     zakres-robot   → spis kodów, jak spis treści specyfikacji
+     dla-dewelopera → pas 21:9 (jego wyróżnik, był od początku)
+     jak-wyceniamy  → oś trzech kroków
+     o-nas          → oś czasu
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* SPIS KODÓW — wejście na „Zakres robót". Klikalny, prowadzi do bloku niżej. */
+.spis{border-top:2px solid var(--linia)}
+.spis a{display:grid;grid-template-columns:56px 1fr auto;gap:10px var(--o3);align-items:baseline;
+  padding-block:18px;border-bottom:1px solid var(--linia2);text-decoration:none}
+.spis a:hover{background:var(--pole)}
+.spis a:hover .spis-nazwa{color:var(--akcent)}
+.spis-nazwa{font-size:1.02rem;font-weight:600}
+
+/* OŚ KROKÓW — wejście na „Jak wyceniamy". Trzy pola, numer prowadzi. */
+.kroki{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--linia2);
+  border-block:1px solid var(--linia2)}
+.kroki > div{background:var(--tlo);padding:var(--o4) var(--o3)}
+.kroki b{display:block;font-family:var(--mono);font-size:.76rem;letter-spacing:.1em;
+  color:var(--akcent);font-weight:400}
+.kroki h3{margin-top:var(--o2);font-size:1.08rem;font-weight:600;letter-spacing:0}
+.kroki p{margin-top:12px;font-size:.95rem;color:var(--tekst2)}
+
+/* OŚ CZASU — wejście na „O nas". Cztery znaczniki na jednej linii. */
+.os-czasu{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--linia2);
+  border-block:1px solid var(--linia2)}
+.os-czasu > div{background:var(--tlo);padding:var(--o4) var(--o3)}
+.os-czasu b{display:block;font-size:clamp(1.35rem,2.4vw,1.9rem);font-weight:700;
+  letter-spacing:-.02em;line-height:1.05}
+.os-czasu span{display:block;margin-top:10px}
+
+@media(max-width:760px){
+  .kroki,.os-czasu{grid-template-columns:1fr}
+  .kroki > div,.os-czasu > div{padding:var(--o3) var(--o2)}
+  .spis a{grid-template-columns:52px 1fr;gap:6px var(--o2)}
+  .spis a .mono:last-child{grid-column:2}
+}
