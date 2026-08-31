@@ -95,16 +95,8 @@ a{color:inherit}
   box-shadow:inset 0 -2px 0 var(--akcent)}
 .nawigacja a:not(.btn)::after{background:var(--akcent);height:2px}
 
-/* nagłówek leżący na zdjęciu hero */
-.top--na-zdjeciu{background:transparent;border-bottom:1px solid rgba(255,255,255,.22);color:#fff}
-.top--na-zdjeciu .nawigacja li+li{border-left-color:rgba(255,255,255,.26)}
-.top--na-zdjeciu .nawigacja a{color:#fff}
-.top--na-zdjeciu .znak span{color:rgba(255,255,255,.90)}
-/* Każdy napis leżący na zdjęciu dostaje cień (rdzeń, lekcja 2026-08-06-001) —
-   pasek i nagłówek hero leżą na kadrze, więc obejmuje je ta sama zasada. */
-.top--na-zdjeciu .znak b,.top--na-zdjeciu .znak span,.top--na-zdjeciu .nawigacja a,
-.pasek--na-zdjeciu span{text-shadow:var(--cien-na-zdjeciu-lekki)}
-.pasek--na-zdjeciu{background:transparent;border-bottom:1px solid rgba(255,255,255,.16)}
+/* ⛔ Nagłówka NIE kładziemy na zdjęciu (K. 31.08, wieczór): pasek nawigacji ma być
+   nieprzezroczysty i jasny — taki sam na głównej jak na każdej podstronie. */
 
 /* ── PRZYCISKI ─────────────────────────────────────────────────────────────── */
 .tel,.wtorny{display:inline-block;text-decoration:none;font-weight:600;padding:12px 18px;
@@ -128,18 +120,21 @@ a{color:inherit}
 /* ══ HERO ═════════════════════════════════════════════════════════════════════
    Reguła nadrzędna K. z 31.08: zdjęcie ma PEŁNĄ szerokość i wysokość ekranu.
    Nagłówek i pasek z NIP-em leżą NA zdjęciu, więc kadr nie oddaje ani piksela.  */
+/* Pierwszy ekran w całości: jasny pasek i nagłówek + zdjęcie, razem równo 100svh.
+   Zdjęcie bierze CAŁĄ resztę wysokości (flex:1) — nie kurczy się pod treść. */
+.gora{display:flex;flex-direction:column;min-height:100svh}
 .hero{position:relative;isolation:isolate;background:var(--ciemne);color:#fff;
-  min-height:100svh;display:flex;flex-direction:column;
+  flex:1;min-height:min(72svh,640px);display:flex;flex-direction:column;
   border-bottom:2px solid var(--linia)}
 .hero-foto{position:absolute;inset:0;z-index:0;width:100%;height:100%;max-width:none;
   object-fit:cover;background:var(--pusty)}
 .hero-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;
   background:
-    linear-gradient(180deg,rgba(16,18,20,.90) 0,rgba(16,18,20,.84) 92px,rgba(16,18,20,.22) 175px,rgba(16,18,20,0) 265px),
-    linear-gradient(0deg,rgba(16,18,20,.94) 0,rgba(16,18,20,.90) 28%,rgba(16,18,20,.44) 50%,rgba(16,18,20,.08) 70%,rgba(16,18,20,0) 85%)}
+    linear-gradient(90deg,rgba(16,18,20,.92) 0,rgba(16,18,20,.88) 34%,rgba(16,18,20,.52) 58%,rgba(16,18,20,.22) 80%,rgba(16,18,20,.16) 100%),
+    linear-gradient(0deg,rgba(16,18,20,.42) 0,rgba(16,18,20,.10) 30%,rgba(16,18,20,0) 55%)}
 .hero-warstwa{position:relative;z-index:2;display:flex;flex-direction:column;flex:1}
 .hero-tresc{flex:1;display:grid;grid-template-columns:1.25fr minmax(300px,380px);
-  align-items:end;gap:var(--o5);padding-top:var(--o5);padding-bottom:clamp(40px,7vh,72px)}
+  align-items:center;gap:var(--o5);padding-block:clamp(40px,7vh,72px)}
 .hero-lewa .mono{color:rgba(255,255,255,.95);text-shadow:var(--cien-na-zdjeciu-lekki)}
 .hero h1{margin-top:var(--o3);font-size:clamp(2.1rem,4.4vw,3.4rem);letter-spacing:-.02em;
   line-height:1.1;max-width:16ch}
@@ -280,8 +275,8 @@ footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:
      gradient przestaje ją zasłaniać. Dlatego ciemne pole dostaje sama kolumna treści:
      nad nią zostaje czysty kadr, pod nią tekst leży na pełnej czerni. */
   /* Na telefonie kadr 3:2 przycięty na wysoki ekran robi się nieczytelnym paskiem,
-     a procentowy gradient zasłania go w całości. Dlatego: czysty PAS ZDJĘCIA pod
-     nagłówkiem, a pod nim treść na twardo odciętym ciemnym polu (bez mgły). */
+     a procentowy gradient zasłania go w całości. Dlatego: czysty PAS ZDJĘCIA na górze
+     sekcji, a pod nim treść na twardo odciętym ciemnym polu (bez mgły). */
   .hero-tresc{grid-template-columns:1fr;gap:var(--o4);align-items:start;
     padding-top:var(--pas-hero);padding-bottom:var(--o5);
     background:linear-gradient(180deg,
@@ -289,10 +284,10 @@ footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:
       rgba(16,18,20,0) calc(var(--pas-hero) - 26px),
       rgba(16,18,20,.96) calc(var(--pas-hero) - 26px),
       rgba(16,18,20,.97) 100%)}
-  /* wąski wycinek kadru: przesunięty niżej, żeby w pasie było też wnętrze, nie sam sufit */
-  .hero-foto{object-position:50% 64%}
-  .hero-scrim{background:
-    linear-gradient(180deg,rgba(16,18,20,.90) 0,rgba(16,18,20,.62) 88px,rgba(16,18,20,.12) 140px,rgba(16,18,20,0) 180px)}
+  /* Na telefonie kadr NIE rozciąga się na całą wysokość sekcji, tylko wypełnia sam pas —
+     inaczej `cover` skaluje go po wysokości i w pasie widać wyłącznie górę zdjęcia (sufit). */
+  .hero-foto{height:calc(var(--pas-hero) + 32px)}
+  .hero-scrim{background:linear-gradient(0deg,rgba(16,18,20,.30) 0,rgba(16,18,20,0) 40%)}
   .hero h1{max-width:none}
   .kafle{grid-template-columns:1fr;gap:var(--o5)}
   .wycena{grid-template-columns:1fr;gap:var(--o4)}
@@ -308,7 +303,6 @@ footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:
   .nawigacja{order:3;width:100%;overflow-x:auto;scrollbar-width:none;
     border-top:1px solid var(--linia2);margin-inline:calc(var(--marg) * -1);
     padding-inline:var(--marg)}
-  .top--na-zdjeciu .nawigacja{border-top-color:rgba(255,255,255,.22)}
   .nawigacja::-webkit-scrollbar{display:none}
   .nawigacja ul{width:max-content}
   .nawigacja a{padding:11px 11px;font-size:.64rem;letter-spacing:.07em}
