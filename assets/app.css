@@ -124,7 +124,7 @@ a{color:inherit}
    Zdjęcie bierze CAŁĄ resztę wysokości (flex:1) — nie kurczy się pod treść. */
 .gora{display:flex;flex-direction:column;min-height:100svh}
 .hero{position:relative;isolation:isolate;background:var(--ciemne);color:#fff;
-  flex:1;min-height:min(72svh,640px);display:flex;flex-direction:column;
+  flex:1;min-height:min(62svh,560px);display:flex;flex-direction:column;
   border-bottom:2px solid var(--linia)}
 .hero-foto{position:absolute;inset:0;z-index:0;width:100%;height:100%;max-width:none;
   object-fit:cover;background:var(--pusty)}
@@ -164,10 +164,14 @@ a{color:inherit}
   letter-spacing:-.02em;max-width:20ch}
 .naglowek-strony p{margin-top:var(--o3);max-width:min(100%,54ch);color:var(--tekst2);font-size:1.05rem}
 
-/* ── PAS LICZB ─────────────────────────────────────────────────────────────── */
+/* ── PAS LICZB ───────────────────────────────────────────────────────────────
+   Siedzi WEWNĄTRZ pierwszego ekranu, przy dolnej krawędzi — jest lustrem jasnego
+   nagłówka u góry. Bez niego kadr urywał się na krawędzi okna i cała kompozycja
+   była górno-ciężka: rama tylko od góry (K. 31.08 wieczorem, po zrzucie z Chrome). */
+.liczby-pas{background:var(--tlo);flex:none}
 .liczby{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--linia2);
   border-block:1px solid var(--linia2)}
-.liczby div{background:var(--tlo);padding:var(--o4) var(--o3)}
+.liczby div{background:var(--tlo);padding:clamp(20px,2.6vh,34px) var(--o3)}
 .liczby b{display:block;font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:700;
   letter-spacing:-.02em;line-height:1.05}
 .liczby span{display:block;margin-top:10px}
@@ -300,13 +304,16 @@ footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:
 @media(max-width:760px){
   :root{--marg:20px}
   .top .wrap{flex-wrap:wrap;gap:var(--o2)}
-  .nawigacja{order:3;width:100%;overflow-x:auto;scrollbar-width:none;
-    border-top:1px solid var(--linia2);margin-inline:calc(var(--marg) * -1);
+  /* Cztery pozycje nie mieszczą się w jednej linii na telefonie — ostatnia ucinała się
+     na krawędzi i wyglądała jak błąd. Siatka 2 × 2 z kreskami 1 px mieści się zawsze
+     i jest tym samym językiem, co pas liczb. */
+  .nawigacja{order:3;width:100%;margin-inline:calc(var(--marg) * -1);
     padding-inline:var(--marg)}
-  .nawigacja::-webkit-scrollbar{display:none}
-  .nawigacja ul{width:max-content}
-  .nawigacja a{padding:11px 11px;font-size:.64rem;letter-spacing:.07em}
-  .nawigacja li:first-child a{padding-left:0}
+  .nawigacja ul{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--linia2);
+    border-top:1px solid var(--linia2)}
+  .nawigacja li{background:var(--tlo)}
+  .nawigacja li+li{border-left:0}
+  .nawigacja a{display:block;padding:13px 14px;font-size:.66rem;letter-spacing:.08em}
   .pasek-vat{display:none}
   .liczby{grid-template-columns:repeat(2,1fr)}
   .liczby div{padding:var(--o3) var(--o2)}
