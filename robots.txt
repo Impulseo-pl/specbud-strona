@@ -1,0 +1,4 @@
+# PODGLĄD ROBOCZY — strona stoi na zdjęciach zastępczych i nie ma
+# wchodzić do wyszukiwarek. Zdjąć razem z PODGLAD_ROBOCZY w build.py.
+User-agent: *
+Disallow: /
