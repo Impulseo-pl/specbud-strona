@@ -251,6 +251,27 @@ a{color:inherit}
 .fakty > div:last-child{padding-right:0}
 .fakty b{display:block;margin-top:10px;font-size:1.02rem;font-weight:600;line-height:1.35}
 
+/* ── PASEK PRODUCENTÓW ───────────────────────────────────────────────────────
+   Znaki Knaufa, Wagnera, Graco i Sigmy pod wierszem M-01 na „Zakres robót".
+   🔴 To JEDYNE kolory na stronie poza granatem akcentu, więc trzymają się karnie:
+   równe pola z kreską 1 px, wspólna linia pozioma, zero cieni i zero ramek wokół
+   samych znaków. Wysokość jest ustawiana PER MARKA (`--h`), nie wspólna — Graco
+   jest 6× szersze niż wysokie, a Knauf prawie kwadratowy, więc równa wysokość
+   dałaby pasek, w którym Graco przygniata resztę. Wyrównujemy pole optyczne.
+   ⛔ Podpis pod paskiem mówi „materiały i sprzęt, na których pracujemy" —
+   NIGDY „partnerzy", „autoryzowany wykonawca" ani „zaufali nam" (DESIGN.md). */
+.marki{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--linia2);
+  border-block:1px solid var(--linia2);margin-top:var(--o4)}
+.marki > div{background:var(--tlo);display:flex;align-items:center;justify-content:center;
+  padding:var(--o4) var(--o3);min-height:104px}
+.marki img{height:var(--h,32px);width:auto;max-width:100%;object-fit:contain}
+.marki .m-knauf{--h:44px}
+.marki .m-wagner{--h:34px}
+.marki .m-sigma{--h:34px}
+.marki .m-graco{--h:22px}
+.marki-nota{display:block;padding-top:14px;color:var(--tekst2);font-size:.8rem;
+  max-width:64ch}
+
 /* ── WYCENA ────────────────────────────────────────────────────────────────── */
 .wycena{border:1px solid var(--linia);background:var(--pole);display:grid;
   grid-template-columns:1.25fr 1fr;gap:var(--o5);padding:var(--o4)}
@@ -371,6 +392,10 @@ footer{border-top:2px solid var(--linia);margin-top:0;padding-block:var(--o5)}
      a kreski poziome trzymają ten sam rytm co wiersze specyfikacji. */
   .fakty{grid-template-columns:1fr}
   .fakty > div{padding-inline:0}
+  /* Cztery znaki w rzędzie na telefonie schodzą do ~85 px szerokości — idą 2 × 2,
+     tak jak pas liczb i menu. */
+  .marki{grid-template-columns:1fr 1fr}
+  .marki > div{min-height:88px;padding:var(--o3)}
   .pas .haslo{padding:var(--o3)}
   .wycena{padding:var(--o3)}
   .stopka{grid-template-columns:1fr;gap:var(--o4)}
