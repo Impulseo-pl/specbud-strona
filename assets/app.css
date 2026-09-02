@@ -237,6 +237,20 @@ a{color:inherit}
 .podpis-pasa{display:flex;justify-content:space-between;gap:var(--o3);flex-wrap:wrap;
   padding-block:11px;border-bottom:1px solid var(--linia2)}
 
+/* WIERSZ FAKTÓW — trzy fakty pod pasem na stronie głównej (sekcja „Duże obiekty").
+   Sekcja 01 ma cztery kafle i dwa wiersze, a 02 był sam pas z hasłem i wyglądał lekko
+   przy tym sąsiedztwie (K. 02.09). To ma być zapowiedź w rytmie WIERSZY SPECYFIKACJI,
+   nie drugi pas liczb: etykieta mono + jedna fraza, bez akapitu i bez wielkich liczb.
+   Kreska podpisu pasa jest górną krawędzią tego wiersza — stąd brak `border-top`
+   i brak `margin-top`. Skrajne pola bez bocznego dopełnienia, żeby tekst stał na tej
+   samej osi co kadr nad nim i odnośnik pod nim. */
+.fakty{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--linia2);
+  border-bottom:1px solid var(--linia2)}
+.fakty > div{background:var(--tlo);padding:16px var(--o3)}
+.fakty > div:first-child{padding-left:0}
+.fakty > div:last-child{padding-right:0}
+.fakty b{display:block;margin-top:10px;font-size:1.02rem;font-weight:600;line-height:1.35}
+
 /* ── WYCENA ────────────────────────────────────────────────────────────────── */
 .wycena{border:1px solid var(--linia);background:var(--pole);display:grid;
   grid-template-columns:1.25fr 1fr;gap:var(--o5);padding:var(--o4)}
@@ -353,6 +367,10 @@ footer{border-top:2px solid var(--linia);margin-top:0;padding-block:var(--o5)}
   .liczby div{padding:var(--o3) var(--o2)}
   .wiersz{grid-template-columns:56px 1fr;gap:6px var(--o2)}
   .wiersz .spec{grid-column:2}
+  /* Trzy fakty w jednej linii dają na telefonie kolumny po ~10 znaków — idą pod siebie,
+     a kreski poziome trzymają ten sam rytm co wiersze specyfikacji. */
+  .fakty{grid-template-columns:1fr}
+  .fakty > div{padding-inline:0}
   .pas .haslo{padding:var(--o3)}
   .wycena{padding:var(--o3)}
   .stopka{grid-template-columns:1fr;gap:var(--o4)}
