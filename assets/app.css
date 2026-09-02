@@ -81,13 +81,15 @@ a{color:inherit}
   color:rgba(255,255,255,.84)}
 
 /* ── NAGŁÓWEK ──────────────────────────────────────────────────────────────── */
-.top{border-bottom:2px solid var(--linia);background:var(--tlo)}
+/* Wysokość logo w pasku siedzi w zmiennej, bo czyta ją też kurtyna powitalna:
+   po odegraniu wejścia obraz musi wrócić DOKŁADNIE do rozmiaru z nagłówka. */
+.top{border-bottom:2px solid var(--linia);background:var(--tlo);--znak-h:40px}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:var(--o3);
   padding-block:14px}
 .znak{text-decoration:none;display:block}
 /* Logo w nagłówku (od 02.09.2026). W STOPCE zostaje wersja pisana — na ciemnym tle
    ciemny znak by zniknął, a druga, jasna kopia pliku to drugi plik do pilnowania. */
-.top .znak img{display:block;height:40px;width:auto}
+.top .znak img{display:block;height:var(--znak-h,40px);width:auto}
 .znak b{display:block;font-size:1.3rem;font-weight:700;letter-spacing:.02em;line-height:1}
 .znak span{display:block;margin-top:5px}
 .nawigacja ul{display:flex;list-style:none}
@@ -414,7 +416,7 @@ footer{border-top:2px solid var(--linia);margin-top:0;padding-block:var(--o5)}
   body{padding-bottom:56px}
   .znak b{font-size:1.15rem}
   .stopka-znak{height:36px}
-  .top .znak img{height:32px}
+  .top{--znak-h:32px}
   .przyciski .tel,.przyciski .wtorny{width:100%;text-align:center}
 }
 @media(max-width:640px){
@@ -650,40 +652,58 @@ footer{border-top:2px solid var(--linia);margin-top:0;padding-block:var(--o5)}
    w opracowaniach o ekranach powitalnych wymienia się jako znamię taniej roboty.
    Zamiast tego maska (`clip-path`) plus rozmycie schodzące do ostrości.
    ⚠️ Lista filtrów MUSI mieć te same funkcje w każdym stanie, inaczej się nie
-   animuje — stąd poświata obecna od początku, tyle że przezroczysta. */
+   animuje — stąd poświata obecna od początku, tyle że przezroczysta.
+
+   🔴 SKALUJEMY W DÓŁ, NIGDY W GÓRĘ (poprawka 02.09.2026 — K. zgłosił rozmyte logo
+   na telefonie). Wcześniej obraz był rysowany w rozmiarze paska (98 × 32 px na
+   telefonie) i rozciągany `transform:scale(2.85)`. Przeglądarka rasteryzuje warstwę
+   w rozmiarze BAZOWYM — a `filter` na obrazie wymusza własną warstwę — więc przez
+   całe wejście na ekranie stała bitmapa o ~1/3 należnej gęstości. Teraz obraz
+   dostaje w kurtynie swój DOCELOWY rozmiar (`--i-w`/`--i-h`, liczony tak, by nie
+   przekroczyć natywnych 958 px pliku), a do paska wraca `scale()` mniejszym od 1.
+   Pomniejszanie nie rozmywa nigdy. */
 .znak{transform-origin:center center}
-.intro-on .znak{
-  transform:translate(var(--i-dx,0px),var(--i-dy,0px)) scale(calc(var(--i-skala,3) * 1.045));
-  will-change:transform;
-}
-.intro-on .znak img{clip-path:inset(0 100% 0 0);
-  filter:blur(14px) drop-shadow(0 0 14px rgba(255,255,255,0)) drop-shadow(0 0 30px rgba(255,255,255,0))}
-.intro-on.intro-gra .znak{
-  transform:translate(var(--i-dx,0px),var(--i-dy,0px)) scale(var(--i-skala,3));
-  transition:transform .5s cubic-bezier(.16,1,.3,1);
+/* Obraz wychodzi z układu strony na czas wejścia, więc `.znak` musi utrzymać jego
+   miejsce w pasku — bez tego nagłówek zapada się i podskakuje po zdjęciu kurtyny. */
+.intro-on .znak{display:block;width:var(--i-baza-w,120px);height:var(--znak-h,40px)}
+.intro-on .znak img{
+  position:fixed;left:50%;top:50%;margin:0;
+  width:var(--i-w,320px);height:var(--i-h,104px);max-width:none;
+  transform:translate(-50%,-50%) scale(1.045);
+  transform-origin:center center;will-change:transform;
+  clip-path:inset(0 100% 0 0);
+  filter:blur(14px) drop-shadow(0 0 14px rgba(255,255,255,0)) drop-shadow(0 0 30px rgba(255,255,255,0));
 }
 .intro-on.intro-gra .znak img{
+  transform:translate(-50%,-50%) scale(1);
   clip-path:inset(0 0 0 0);
   filter:blur(0px) drop-shadow(0 0 14px rgba(255,255,255,0)) drop-shadow(0 0 30px rgba(255,255,255,0));
-  transition:clip-path .5s cubic-bezier(.16,1,.3,1),filter .5s cubic-bezier(.16,1,.3,1);
-}
-/* Poświata w kolorze strony zapala się na czas przelotu: przez ułamek sekundy znak
-   musi przejść nad ciemnym hero, a jest niemal czarny — bez tego znika w kadrze.
-   Na bieli poświaty nie widać wcale, więc po wylądowaniu w pasku gaśnie sama. */
-.intro-on.intro-out .znak img{
-  filter:blur(0px) drop-shadow(0 0 14px rgba(255,255,255,.95)) drop-shadow(0 0 30px rgba(255,255,255,.9));
-  transition:filter .16s linear;
+  transition:transform .5s cubic-bezier(.16,1,.3,1),
+             clip-path .5s cubic-bezier(.16,1,.3,1),
+             filter .5s cubic-bezier(.16,1,.3,1);
 }
 /* Przelot do paska bierze spokojniejszą krzywą niż odsłona — logo ma dojechać,
-   a nie strzelić. */
-.intro-on.intro-out .znak{transform:none;transition:transform .72s cubic-bezier(.16,.84,.44,1)}
-/* Pomiar pozycji docelowej: skrypt na jedną klatkę zdejmuje przesunięcie. */
-.znak.mierze{transform:none!important;transition:none!important}
+   a nie strzelić. Poświata w kolorze strony zapala się na czas przelotu: przez
+   ułamek sekundy znak idzie nad ciemnym hero, a jest niemal czarny. Na bieli
+   poświaty nie widać wcale, więc po wylądowaniu w pasku gaśnie sama. */
+.intro-on.intro-out .znak img{
+  transform:translate(calc(-50% + var(--i-px,0px)),calc(-50% + var(--i-py,0px)))
+            scale(var(--i-zmniejsz,.34));
+  filter:blur(0px) drop-shadow(0 0 14px rgba(255,255,255,.95)) drop-shadow(0 0 30px rgba(255,255,255,.9));
+  transition:transform .72s cubic-bezier(.16,.84,.44,1),filter .16s linear;
+}
+/* Pomiar miejsca docelowego: skrypt na jedną klatkę przywraca obraz do stanu z paska. */
+.znak.mierze{width:auto!important;height:auto!important}
+.znak.mierze img{position:static!important;transform:none!important;transition:none!important;
+  width:auto!important;height:var(--znak-h,40px)!important;
+  filter:none!important;clip-path:none!important}
 
 @media (prefers-reduced-motion:reduce){
   .intro-on #intro{display:none}
   .intro-on body{overflow:auto}
-  .intro-on .znak,.intro-on .znak img{transform:none!important;transition:none!important;
+  .intro-on .znak{width:auto;height:auto}
+  .intro-on .znak img{position:static!important;transform:none!important;transition:none!important;
+    width:auto!important;height:var(--znak-h,40px)!important;
     filter:none!important;clip-path:none!important}
   .intro-on .top{border-bottom-color:var(--linia)}
   .intro-on .top .nawigacja,.intro-on .top .tel{opacity:1}

@@ -29,7 +29,7 @@
       href="assets/fonty/ibm-plex-mono-latin-400-normal.woff2">
 <link rel="preload" as="image" href="img/hero.jpg" fetchpriority="high">
 <link rel="stylesheet" href="assets/rdzen.css?v=10">
-<link rel="stylesheet" href="assets/app.css?v=34">
+<link rel="stylesheet" href="assets/app.css?v=35">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"HomeAndConstructionBusiness",
 "name":"SPECBUD Maciej Zgrzebniak","alternateName":"SPECBUD","url":"https://specbud-wykonczenia-kalisz.pl/",
@@ -82,8 +82,9 @@
   var h = document.documentElement;
   if (!h.classList.contains('intro-on')) return;
   var znak = document.querySelector('.znak');
+  var obraz = znak && znak.querySelector('img');
   function sprzataj(){ h.classList.remove('intro-on','intro-gra','intro-out'); }
-  if (!znak) { sprzataj(); return; }
+  if (!znak || !obraz) { sprzataj(); return; }
 
   var zdjete = false;
   function koniec(){
@@ -92,21 +93,31 @@
     setTimeout(sprzataj, 900);
   }
 
-  /* Pozycja DOCELOWA logo: na jedną klatkę zdejmujemy przesunięcie klasą `mierze`. */
+  /* Miejsce DOCELOWE logo (to w pasku): na jedną klatkę przywracamy obraz do stanu
+     z nagłówka klasą `mierze` i mierzymy właśnie JEGO, nie link dookoła. */
   znak.classList.add('mierze');
-  var r = znak.getBoundingClientRect();
+  var r = obraz.getBoundingClientRect();
   znak.classList.remove('mierze');
   if (!r.width || !r.height) { sprzataj(); return; }
-  /* ⚠️ Plik logo ma 958 px szerokości — powyżej tego pierwsza rzecz, którą widzi
-     klient, byłaby rozmyta. Stąd sufit 480 px. */
+
+  /* 🔴 Rozmiar logo NA KURTYNIE. Obraz dostaje go naprawdę (`width`/`height`),
+     a nie przez `transform:scale()` w górę — powiększana bitmapa była rozmyta na
+     telefonie (zgłoszone przez K. 02.09.2026). Sufit liczy się z PIKSELI PLIKU:
+     958 px podzielone przez gęstość ekranu, żeby przy DPR 3 nie brakło detalu. */
+  var dpr = Math.min(window.devicePixelRatio || 1, 3);
+  var sufitPliku = 958 / dpr;
   var cel = (innerWidth < 680) ? Math.min(innerWidth * 0.72, 320)
                                : Math.min(innerWidth * 0.42, 480);
-  var s = cel / r.width;
-  h.style.setProperty('--i-skala', s.toFixed(3));
-  h.style.setProperty('--i-dx', Math.round(innerWidth / 2 - (r.left + r.width / 2)) + 'px');
-  h.style.setProperty('--i-dy', Math.round(innerHeight / 2 - (r.top + r.height / 2)) + 'px');
-  h.style.setProperty('--i-w', Math.round(r.width * s) + 'px');
-  h.style.setProperty('--i-h', Math.round(r.height * s) + 'px');
+  cel = Math.max(r.width, Math.min(cel, sufitPliku));
+  var wys = cel * r.height / r.width;
+
+  h.style.setProperty('--i-baza-w', Math.round(r.width) + 'px');
+  h.style.setProperty('--i-w', Math.round(cel) + 'px');
+  h.style.setProperty('--i-h', Math.round(wys) + 'px');
+  /* Powrót do paska = pomniejszenie (zawsze < 1) plus dojazd na swoje miejsce. */
+  h.style.setProperty('--i-zmniejsz', (r.width / cel).toFixed(4));
+  h.style.setProperty('--i-px', Math.round(r.left + r.width / 2 - innerWidth / 2) + 'px');
+  h.style.setProperty('--i-py', Math.round(r.top + r.height / 2 - innerHeight / 2) + 'px');
 
   /* ⚠️ DWIE klatki. Po jednej przeglądarka sklei stan startowy ze świeżo
      ustawionymi zmiennymi i przejścia w ogóle nie widać. */
