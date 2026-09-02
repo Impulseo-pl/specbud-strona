@@ -271,6 +271,14 @@ a{color:inherit}
 .marki .m-graco{--h:22px}
 .marki-nota{display:block;padding-top:14px;color:var(--tekst2);font-size:.8rem;
   max-width:64ch}
+/* Wariant na stronę główną: ten sam pas, ale niższy i podpisany ETYKIETĄ MONO, nie zdaniem —
+   na głównej nie ma ani jednego akapitu poza jednym zdaniem przy wycenie (etap 5, punkt 2).
+   Pełne zdanie o znakach towarowych stoi przy tym samym pasie na „Zakres robót". */
+.marki--glowna > div{min-height:88px;padding-block:var(--o3)}
+.marki-etykieta{display:block;border-bottom:1px solid var(--linia2);line-height:1.5;
+  /* 20 px pod tekstem, nie 13: przy 420 px etykieta łamie się na dwie linijki i ogonki
+     „ą/ę" siadały na kresce (bramka: „tekst przyklejony do linii", pomiar 02.09). */
+  padding-block:14px 20px}
 
 /* ── WYCENA ────────────────────────────────────────────────────────────────── */
 .wycena{border:1px solid var(--linia);background:var(--pole);display:grid;
