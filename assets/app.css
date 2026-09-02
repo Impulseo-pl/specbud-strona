@@ -326,6 +326,10 @@ a{color:inherit}
    margines stopki dokładał drugie tyle i przed każdą stopką stał pusty pas ~280 px. */
 footer{border-top:2px solid var(--linia);margin-top:0;padding-block:var(--o5)}
 .stopka{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:var(--o5) var(--o4)}
+/* Znak w stopce: ten sam ciemny plik co w nagłówku — stopka stoi na białym tle strony,
+   więc jasna wersja nie jest potrzebna (i nie robimy drugiego pliku do pilnowania).
+   ⛔ Nie nadawać mu klasy `.znak` — tę przejmuje animacja kurtyny powitalnej. */
+.stopka-znak{display:block;height:44px;width:auto}
 .stopka h2{font-size:.72rem;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;
   color:var(--tekst2);font-weight:400;margin-bottom:var(--o2)}
 .stopka p{color:var(--tekst2);font-size:.94rem;margin-top:var(--o1)}
@@ -391,7 +395,6 @@ footer{border-top:2px solid var(--linia);margin-top:0;padding-block:var(--o5)}
   .nawigacja li{background:var(--tlo)}
   .nawigacja li+li{border-left:0}
   .nawigacja a{display:block;padding:13px 14px;font-size:.66rem;letter-spacing:.08em}
-  .pasek-vat{display:none}
   .liczby{grid-template-columns:repeat(2,1fr)}
   .liczby div{padding:var(--o3) var(--o2)}
   .wiersz{grid-template-columns:56px 1fr;gap:6px var(--o2)}
@@ -410,6 +413,7 @@ footer{border-top:2px solid var(--linia);margin-top:0;padding-block:var(--o5)}
   .pasek-tel{display:block}
   body{padding-bottom:56px}
   .znak b{font-size:1.15rem}
+  .stopka-znak{height:36px}
   .top .znak img{height:32px}
   .przyciski .tel,.przyciski .wtorny{width:100%;text-align:center}
 }
