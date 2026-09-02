@@ -166,11 +166,24 @@ a{color:inherit}
   padding:16px 0;border-bottom:1px solid var(--linia2)}
 .karta tr:last-child th,.karta tr:last-child td{border-bottom:0;padding-bottom:0}
 
-/* ── NAGŁÓWEK PODSTRONY (biały, bez zdjęcia) ───────────────────────────────── */
-.naglowek-strony{padding-top:clamp(48px,7vw,88px);padding-bottom:var(--o5)}
-.naglowek-strony h1{margin-top:var(--o3);font-size:clamp(1.9rem,3.6vw,2.8rem);
+/* ── NAGŁÓWEK PODSTRONY (biały, bez zdjęcia) ───────────────────────────────────
+   🔴 DWIE KOLUMNY, obie stoją na TEJ SAMEJ linii dolnej: kicker + H1 po lewej,
+   lead po prawej. Do 02.09 nagłówek i lead siedziały w lewej połowie, a cała prawa
+   połowa ekranu była pustym białym polem bez żadnej przeciwwagi — pierwsza rzecz,
+   którą K. zgłosił tego dnia („nie wjebane białe pole i tyle"). Pustka ma równoważyć
+   treść, a nie wisieć po jednej stronie. Zwija się do jednej kolumny poniżej 960 px. */
+.naglowek-strony{padding-top:clamp(48px,7vw,88px);padding-bottom:var(--o4);
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  column-gap:var(--o5);align-items:end}
+.naglowek-strony>*{grid-column:1}
+.naglowek-strony>.mono{grid-row:1}
+.naglowek-strony h1{grid-row:2;margin-top:var(--o3);font-size:clamp(1.9rem,3.6vw,2.8rem);
   letter-spacing:-.02em;max-width:20ch}
-.naglowek-strony p{margin-top:var(--o3);max-width:min(100%,54ch);color:var(--tekst2);font-size:1.05rem}
+.naglowek-strony p{grid-column:2;grid-row:2;margin-top:0;align-self:end;
+  max-width:min(100%,54ch);color:var(--tekst2);font-size:1.05rem}
+/* Sekcja pod otwarciem schodzi wyżej: pełny odstęp międzysekcyjny POD leadem robił
+   z otwarcia i treści dwie osobne strony rozdzielone pustym pasem ~200 px. */
+.wrap--otwarcie+.sekcja{padding-top:var(--o5)}
 
 /* ── PAS LICZB ───────────────────────────────────────────────────────────────
    Siedzi WEWNĄTRZ pierwszego ekranu, przy dolnej krawędzi — jest lustrem jasnego
@@ -234,8 +247,11 @@ a{color:inherit}
   gap:12px}
 
 /* ── BLOKI TREŚCI PODSTRON ─────────────────────────────────────────────────── */
+/* `align-items:center`, a nie `start`: przy krótkim tekście (D-02 ma cztery wiersze
+   obok kadru na 380 px) pustka zbierała się CAŁA pod tekstem, po jednej stronie.
+   Wyśrodkowanie rozkłada ją równo nad i pod — pustka symetryczna zamiast dziury. */
 .blok{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:var(--o5);
-  align-items:start;margin-top:var(--o5)}
+  align-items:center;margin-top:var(--o5)}
 .blok--odwrocony .blok-obraz{order:-1}
 .blok-tresc h3{font-size:1.15rem;font-weight:700;margin-top:var(--o2)}
 .blok-tresc p{margin-top:var(--o3);max-width:52ch;color:var(--tekst2)}
@@ -263,7 +279,9 @@ a{color:inherit}
 .pytanie p{padding-bottom:20px;max-width:min(100%,58ch);color:var(--tekst2)}
 
 /* ── STOPKA ────────────────────────────────────────────────────────────────── */
-footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:var(--o5)}
+/* ⚠️ ZERO marginesu: ostatnia sekcja ma już własny odstęp dolny `--sekcja`, więc
+   margines stopki dokładał drugie tyle i przed każdą stopką stał pusty pas ~280 px. */
+footer{border-top:2px solid var(--linia);margin-top:0;padding-block:var(--o5)}
 .stopka{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:var(--o5) var(--o4)}
 .stopka h2{font-size:.72rem;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;
   color:var(--tekst2);font-weight:400;margin-bottom:var(--o2)}
@@ -306,6 +324,14 @@ footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:
   .wycena .prawa{align-items:stretch}
   .blok{grid-template-columns:1fr;gap:var(--o4)}
   .blok--odwrocony .blok-obraz{order:0}
+  /* Dwukolumnowe otwarcie podstrony i nota na marginesie wracają pod tekst — na wąskim
+     ekranie kolumna obok byłaby paskiem na kilka znaków. */
+  .naglowek-strony{grid-template-columns:1fr}
+  .naglowek-strony>*,.naglowek-strony h1,.naglowek-strony p{grid-column:1}
+  .naglowek-strony>.mono{grid-row:auto}
+  .naglowek-strony h1{grid-row:auto}
+  .naglowek-strony p{grid-row:auto;margin-top:var(--o3)}
+  .spec-obok{border-top:0;padding-top:0}
   .pas{aspect-ratio:4/3;min-height:0}
   .stopka{grid-template-columns:1fr 1fr}
 }
@@ -345,8 +371,20 @@ footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:
 
 /* ── DOPEŁNIENIE UKŁADU PODSTRON ───────────────────────────────────────────── */
 .blok+.blok{margin-top:var(--sekcja)}
-.blok--sam-tekst{grid-template-columns:1fr}
+/* Blok bez kadru trzyma TĘ SAMĄ siatkę — inaczej tekst kończył się w połowie
+   szerokości, a prawa połowa zostawała pusta pod kreską ciągnącą się przez cały
+   ekran. Linijka specyfikacji wychodzi więc do prawej kolumny jako nota na
+   marginesie i domyka kompozycję. */
+/* `row-gap:0` — odstęp między wierszami siatki (64 px) rozjeżdżał nagłówek bloku
+   i jego własny tekst; pion trzymają tu marginesy akapitu i noty. */
+.blok--sam-tekst{align-items:start;row-gap:0}
 .blok--sam-tekst .blok-tresc p,.blok--sam-tekst .lista-spec{max-width:min(100%,58ch)}
+/* Nagłówek bloku bez kadru zajmuje CAŁY pierwszy wiersz siatki, więc tekst i nota
+   startują od tej samej linii — bez liczenia wysokości nagłówka w CSS. */
+.blok--sam-tekst>.kafel-gora{grid-column:1/-1}
+.blok--sam-tekst .blok-tresc>p:first-child{margin-top:var(--o3)}
+.spec-obok{align-self:start;margin-top:var(--o3);
+  padding-top:var(--o2);border-top:1px solid var(--linia2)}
 .spec-linia{margin-top:var(--o3)}
 .lista-spec li>span:first-child{font-weight:600}
 
@@ -419,7 +457,13 @@ footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:
 .kafel--katalog .pytanie summary{padding-block:15px;font-size:.97rem;font-weight:600}
 .kafel--katalog .pytanie p{padding-bottom:16px;max-width:min(100%,58ch)}
 /* Zdanie o zasięgu — jedna linijka pod wierszami specyfikacji, nie akapit strony. */
-.zasieg{margin-top:var(--o4);max-width:min(100%,58ch);color:var(--tekst2);font-size:.95rem}
+/* Wiersz zasięgu czyta się jak ostatnia pozycja katalogu (etykieta ↔ treść), a nie
+   jak akapit doklejony do lewej krawędzi z pustą prawą połową ekranu. */
+.zasieg{display:grid;grid-template-columns:56px minmax(0,1fr) minmax(0,1fr);
+  gap:10px var(--o3);align-items:baseline;
+  margin-top:var(--o5);padding-top:17px;border-top:1px solid var(--linia)}
+.zasieg p{max-width:min(100%,44ch);color:var(--tekst2);font-size:.95rem}
+.zasieg .miasta{text-align:right}
 
 /* ── PAS BEZ HASŁA (jak-wyceniamy, o-nas) ────────────────────────────────────
    Ten sam kadr 21:9 co na `dla-dewelopera`, ale bez przyciemnienia i bez zdania
@@ -435,13 +479,22 @@ footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:
    Jedna wąska kolumna wyrównana do LEWEJ krawędzi siatki, jak formularz.
    ⚠️ `58ch` to sufit: `ch` mierzy szerokość zera, więc 64ch puszcza wiersze
    po ~90 znaków przy bramce liczącej 80. */
-.dokument{max-width:min(100%,58ch)}
+/* Kolumna tekstu ZOSTAJE wąska i przy lewej krawędzi (to nadal dokument, nie list),
+   ale punkt rozciąga się na całą siatkę, a linijka specyfikacji siada na PRAWYM
+   marginesie — jak nota na skraju formularza. Bez tego prawa połowa strony była
+   pustym polem na całą wysokość obu punktów (uwaga K. 02.09). */
+.dokument{max-width:100%}
+.dok-punkt{display:grid;grid-template-columns:minmax(0,58ch) minmax(0,1fr);
+  column-gap:var(--o5);align-items:start}
 .dok-punkt+.dok-punkt{margin-top:var(--o5)}
-.dok-gora{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--linia);
-  padding-bottom:10px}
+.dok-gora{grid-column:1/-1;display:flex;align-items:baseline;gap:14px;
+  border-bottom:1px solid var(--linia);padding-bottom:10px}
 .dok-gora h2{font-size:1.15rem;font-weight:700;letter-spacing:0}
-.dok-punkt p{margin-top:var(--o3);color:var(--tekst2)}
-.dok-spec{margin-top:var(--o3)}
+/* ⚠️ `:not(.dok-spec)` jest konieczne: `.dok-punkt p` bije `.dok-spec` na punkty
+   i bez tego nota wracała do lewej kolumny, nad akapit. */
+.dok-punkt p:not(.dok-spec){grid-column:1;margin-top:var(--o3);color:var(--tekst2)}
+.dok-punkt .dok-spec{grid-column:2;grid-row:2;margin-top:var(--o3);padding-top:var(--o2);
+  border-top:1px solid var(--linia2)}
 
 /* TABELA „co realnie zmienia cenę" — pełna szerokość, przeciwwaga dla wąskiej kolumny. */
 .tabela-blok{margin-top:var(--sekcja)}
@@ -471,10 +524,16 @@ footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:
 @media(max-width:960px){
   .katalog{grid-template-columns:1fr;gap:var(--o5)}
   .kafel--katalog .pytanie{margin-top:0}
+  .dok-punkt{grid-template-columns:1fr}
+  .dok-punkt p:not(.dok-spec){grid-column:1}
+  .dok-punkt .dok-spec{grid-column:1;grid-row:auto;border-top:0;padding-top:0}
 }
 @media(max-width:760px){
   .tabela tbody th{width:auto}
   .tabela th,.tabela td{padding-right:var(--o2)}
+  /* 56 px na etykietę + dwie kolumny = na telefonie wszystko zjeżdża pod prawą krawędź */
+  .zasieg{grid-template-columns:1fr;gap:var(--o2)}
+  .zasieg .miasta{text-align:left}
 }
 
 
