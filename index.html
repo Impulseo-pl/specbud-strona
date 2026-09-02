@@ -29,7 +29,7 @@
       href="assets/fonty/ibm-plex-mono-latin-400-normal.woff2">
 <link rel="preload" as="image" href="img/hero.jpg" fetchpriority="high">
 <link rel="stylesheet" href="assets/rdzen.css?v=10">
-<link rel="stylesheet" href="assets/app.css?v=35">
+<link rel="stylesheet" href="assets/app.css?v=37">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"HomeAndConstructionBusiness",
 "name":"SPECBUD Maciej Zgrzebniak","alternateName":"SPECBUD","url":"https://specbud-wykonczenia-kalisz.pl/",
@@ -38,7 +38,7 @@
 "address":{"@type":"PostalAddress","streetAddress":"ul. Łęgowa 8a","postalCode":"62-800","addressLocality":"Kalisz","addressCountry":"PL"},
 "areaServed":["Kalisz","Ostrów Wielkopolski","Pleszew","Jarocin","Krotoszyn","Turek","Konin","Ostrzeszów","Sieradz","Wielkopolska"],
 "vatID":"PL6182027449","foundingDate":"2017-07-05"}
-</script><script>
+</script><script>document.documentElement.classList.add('js')</script><script>
 (function(){
   try{
     if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
@@ -66,7 +66,11 @@
   <div class="wrap">
     <a class="znak" href="index.html" aria-label="SPECBUD - strona główna"><img
       src="img/logo.png" width="958" height="311" alt="SPECBUD - Wykończenia obiektów"></a>
-    <nav class="nawigacja" aria-label="Główne">
+    <button class="burger" type="button" aria-expanded="false" aria-controls="menu-glowne">
+      <span class="burger-kreski" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>Menu</span>
+    </button>
+    <nav class="nawigacja nav" id="menu-glowne" aria-label="Główne">
       <ul>
         <li><a href="zakres-robot.html">Zakres robót</a></li>
         <li><a href="dla-dewelopera.html">Dla dewelopera</a></li>
