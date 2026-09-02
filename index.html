@@ -29,7 +29,7 @@
       href="assets/fonty/ibm-plex-mono-latin-400-normal.woff2">
 <link rel="preload" as="image" href="img/hero.jpg" fetchpriority="high">
 <link rel="stylesheet" href="assets/rdzen.css?v=10">
-<link rel="stylesheet" href="assets/app.css?v=19">
+<link rel="stylesheet" href="assets/app.css?v=20">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"HomeAndConstructionBusiness",
 "name":"SPECBUD Maciej Zgrzebniak","alternateName":"SPECBUD","url":"https://specbud-wykonczenia-kalisz.pl/",
@@ -38,9 +38,22 @@
 "address":{"@type":"PostalAddress","streetAddress":"ul. Łęgowa 8a","postalCode":"62-800","addressLocality":"Kalisz","addressCountry":"PL"},
 "areaServed":["Kalisz","Ostrów Wielkopolski","Pleszew","Jarocin","Krotoszyn","Turek","Konin","Ostrzeszów","Sieradz","Wielkopolska"],
 "vatID":"PL6182027449","foundingDate":"2017-07-05"}
+</script><script>
+(function(){
+  try{
+    if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    if (location.search.indexOf('intro') < 0) {
+      try { if (sessionStorage.getItem('specbud-intro')) return;
+            sessionStorage.setItem('specbud-intro','1'); } catch(e){}
+    }
+    document.documentElement.classList.add('intro-on');
+  }catch(e){}
+})();
 </script>
+
 </head>
 <body>
+<div id="intro" aria-hidden="true"><span class="i-kreska"></span></div>
 <a class="skip" href="#tresc">Przejdź do treści</a>
 <div class="gora">
 <div class="pasek">
@@ -51,7 +64,8 @@
 </div>
 <header class="top">
   <div class="wrap">
-    <a class="znak" href="index.html"><b>SPECBUD</b><span class="mono">Wykończenia obiektów</span></a>
+    <a class="znak" href="index.html" aria-label="SPECBUD - strona główna"><img
+      src="img/logo.png" width="958" height="311" alt="SPECBUD - Wykończenia obiektów"></a>
     <nav class="nawigacja" aria-label="Główne">
       <ul>
         <li><a href="zakres-robot.html">Zakres robót</a></li>
@@ -63,6 +77,70 @@
     <a class="tel" href="tel:+48730696616">730 696 616<small>odbieram osobiście</small></a>
   </div>
 </header>
+<script>
+(function(){
+  var h = document.documentElement;
+  if (!h.classList.contains('intro-on')) return;
+  var znak = document.querySelector('.znak');
+  function sprzataj(){ h.classList.remove('intro-on','intro-gra','intro-out'); }
+  if (!znak) { sprzataj(); return; }
+
+  var zdjete = false;
+  function koniec(){
+    if (zdjete) return; zdjete = true;
+    h.classList.add('intro-out');
+    setTimeout(sprzataj, 900);
+  }
+
+  /* Pozycja DOCELOWA logo: na jedną klatkę zdejmujemy przesunięcie klasą `mierze`. */
+  znak.classList.add('mierze');
+  var r = znak.getBoundingClientRect();
+  znak.classList.remove('mierze');
+  if (!r.width || !r.height) { sprzataj(); return; }
+  /* ⚠️ Plik logo ma 958 px szerokości — powyżej tego pierwsza rzecz, którą widzi
+     klient, byłaby rozmyta. Stąd sufit 480 px. */
+  var cel = (innerWidth < 680) ? Math.min(innerWidth * 0.72, 320)
+                               : Math.min(innerWidth * 0.42, 480);
+  var s = cel / r.width;
+  h.style.setProperty('--i-skala', s.toFixed(3));
+  h.style.setProperty('--i-dx', Math.round(innerWidth / 2 - (r.left + r.width / 2)) + 'px');
+  h.style.setProperty('--i-dy', Math.round(innerHeight / 2 - (r.top + r.height / 2)) + 'px');
+  h.style.setProperty('--i-w', Math.round(r.width * s) + 'px');
+  h.style.setProperty('--i-h', Math.round(r.height * s) + 'px');
+
+  /* ⚠️ DWIE klatki. Po jednej przeglądarka sklei stan startowy ze świeżo
+     ustawionymi zmiennymi i przejścia w ogóle nie widać. */
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    h.classList.add('intro-gra');
+    /* Zasłona schodzi, gdy gotowe jest HERO — nie po sztywnym timerze i NIE po
+       `window.load`, bo ten czeka na wszystkie zdjęcia strony. SUFIT policzony
+       wstecz z budżetu: odsłona trwa 0,72 s, strona ma być widoczna w ~1,7 s. */
+    var start = Date.now(), MIN = 740, SUFIT = 980, zaladowane = false, hero = null;
+    function heroGotowe(){
+      if (!hero) hero = document.querySelector('.hero-foto');
+      return !!(hero && hero.complete && hero.naturalWidth > 0);
+    }
+    function moze(){
+      if (zdjete) return;
+      if (Date.now() - start >= MIN && (heroGotowe() || zaladowane)) koniec();
+      else setTimeout(moze, 70);
+    }
+    window.addEventListener('load', function(){ zaladowane = true; moze(); });
+    moze();
+    setTimeout(koniec, SUFIT);
+  }); });
+
+  /* ⚠️ Bezpieczniki NIEZALEŻNE od klatek obrazu: w karcie otwartej w tle
+     przeglądarka wstrzymuje `requestAnimationFrame`, więc timery ze środka
+     nigdy by nie wystartowały, a zasłona by wisiała. */
+  setTimeout(koniec, 1900);
+  setTimeout(sprzataj, 3000);
+  ['click','wheel','touchstart','keydown'].forEach(function(z){
+    window.addEventListener(z, koniec, {passive:true});
+  });
+})();
+</script>
+
 
 <section class="hero">
   <img class="hero-foto" src="img/hero.jpg" alt="Jasne wnętrze użytkowe po wykończeniu, sufit podwieszany i słupy" width="3000" height="2000" fetchpriority="high">

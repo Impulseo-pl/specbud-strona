@@ -85,6 +85,9 @@ a{color:inherit}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:var(--o3);
   padding-block:14px}
 .znak{text-decoration:none;display:block}
+/* Logo w nagłówku (od 02.09.2026). W STOPCE zostaje wersja pisana — na ciemnym tle
+   ciemny znak by zniknął, a druga, jasna kopia pliku to drugi plik do pilnowania. */
+.top .znak img{display:block;height:40px;width:auto}
 .znak b{display:block;font-size:1.3rem;font-weight:700;letter-spacing:.02em;line-height:1}
 .znak span{display:block;margin-top:5px}
 .nawigacja ul{display:flex;list-style:none}
@@ -330,6 +333,7 @@ footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:
   .pasek-tel{display:block}
   body{padding-bottom:56px}
   .znak b{font-size:1.15rem}
+  .top .znak img{height:32px}
   .przyciski .tel,.przyciski .wtorny{width:100%;text-align:center}
 }
 @media(max-width:640px){
@@ -471,4 +475,102 @@ footer{border-top:2px solid var(--linia);margin-top:var(--sekcja);padding-block:
 @media(max-width:760px){
   .tabela tbody th{width:auto}
   .tabela th,.tabela td{padding-right:var(--o2)}
+}
+
+
+/* ── KURTYNA Z LOGO (ekran powitalny) ──────────────────────────────────────
+   🔴 TYLKO STRONA GŁÓWNA, raz na wizytę (`sessionStorage`). `?intro` = zagraj znowu.
+   Wzorzec: Meble FRONT → STOLMAR. Jedzie DOKŁADNIE ten sam element co w nagłówku,
+   więc nie da się zobaczyć szwu między „logo z wejścia" a „logo w pasku".
+
+   Zasłona ma kolor STRONY (biel), a kontrast robi CIEMNE HERO, które wyjeżdża spod
+   niej — to jest cały efekt. ⛔ Ciemna zasłona nad ciemnym hero nie odsłania niczego.
+
+   Cztery bezpieczniki, wszystkie obowiązkowe:
+   1. `#intro` jest domyślnie `display:none` — bez JS wejścia po prostu nie ma;
+   2. twarde limity czasu w skrypcie zdejmują zasłonę niezależnie od wszystkiego;
+   3. klik / scroll / dotyk / klawisz przerywa natychmiast;
+   4. `prefers-reduced-motion` pomija całość. */
+#intro{display:none}
+.intro-on #intro{
+  display:block;position:fixed;inset:0;z-index:300;background:var(--tlo);
+  transform:translateY(0);
+  /* ⚠️ Świadomie BEZ expo-out. Kurtyna i logo jadą naraz, w przeciwnych kierunkach:
+     przy szybkim starcie krawędź zeszłaby pod logo w pierwszych 100 ms i przez pół
+     sekundy ciemny znak jechałby PO ciemnym zdjęciu (zmierzone na STOLMARZE 31.08).
+     Wolny start trzyma krawędź w górze, dopóki logo jej nie wyprzedzi. */
+  transition:transform .72s cubic-bezier(.66,0,.24,1);
+}
+/* Cień NAD krawędzią: biała płachta na białej stronie nie ma widocznej krawędzi
+   wszędzie tam, gdzie pod spodem nie ma zdjęcia. */
+.intro-on #intro::before{
+  content:"";position:absolute;left:0;right:0;bottom:100%;height:56px;
+  background:linear-gradient(to top,rgba(20,22,24,.10),rgba(20,22,24,0));
+}
+.intro-on.intro-out #intro{transform:translateY(100%);pointer-events:none}
+.intro-on body{overflow:hidden}
+
+/* Drugi takt ruchu: kreska w kolorze akcentu pod logo. Bez niej wejście jest jednym
+   płaskim gestem — a jeden gest wygląda jak zwykły fade z szablonu. */
+.i-kreska{
+  position:absolute;left:50%;top:50%;width:var(--i-w,160px);height:2px;
+  background:var(--akcent);transform-origin:center;opacity:0;
+  transform:translate(-50%,calc(var(--i-h,60px) / 2 + 22px)) scaleX(0);
+}
+.intro-on.intro-gra .i-kreska{
+  opacity:1;transform:translate(-50%,calc(var(--i-h,60px) / 2 + 22px)) scaleX(1);
+  transition:transform .42s cubic-bezier(.16,1,.3,1) .12s,opacity .18s linear .12s;
+}
+.intro-on.intro-out .i-kreska{opacity:0;transition:opacity .22s linear}
+
+/* Nagłówek nad zasłoną, ale widoczne jest z niego TYLKO logo. Kreska pod paskiem
+   znika na czas wejścia — inaczej przez białą kurtynę idzie czarna linia. */
+.intro-on .top{position:relative;z-index:301;border-bottom-color:transparent}
+.intro-on .top .nawigacja,.intro-on .top .tel{opacity:0}
+.intro-on.intro-out .top{border-bottom-color:var(--linia);transition:border-color .4s linear .3s}
+.intro-on.intro-out .top .nawigacja,.intro-on.intro-out .top .tel{
+  opacity:1;transition:opacity .5s var(--ease) .3s;
+}
+
+/* ⛔ ZERO zwykłego `opacity`+`scale` na logo — to jest dokładnie ten wzorzec, który
+   w opracowaniach o ekranach powitalnych wymienia się jako znamię taniej roboty.
+   Zamiast tego maska (`clip-path`) plus rozmycie schodzące do ostrości.
+   ⚠️ Lista filtrów MUSI mieć te same funkcje w każdym stanie, inaczej się nie
+   animuje — stąd poświata obecna od początku, tyle że przezroczysta. */
+.znak{transform-origin:center center}
+.intro-on .znak{
+  transform:translate(var(--i-dx,0px),var(--i-dy,0px)) scale(calc(var(--i-skala,3) * 1.045));
+  will-change:transform;
+}
+.intro-on .znak img{clip-path:inset(0 100% 0 0);
+  filter:blur(14px) drop-shadow(0 0 14px rgba(255,255,255,0)) drop-shadow(0 0 30px rgba(255,255,255,0))}
+.intro-on.intro-gra .znak{
+  transform:translate(var(--i-dx,0px),var(--i-dy,0px)) scale(var(--i-skala,3));
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.intro-on.intro-gra .znak img{
+  clip-path:inset(0 0 0 0);
+  filter:blur(0px) drop-shadow(0 0 14px rgba(255,255,255,0)) drop-shadow(0 0 30px rgba(255,255,255,0));
+  transition:clip-path .5s cubic-bezier(.16,1,.3,1),filter .5s cubic-bezier(.16,1,.3,1);
+}
+/* Poświata w kolorze strony zapala się na czas przelotu: przez ułamek sekundy znak
+   musi przejść nad ciemnym hero, a jest niemal czarny — bez tego znika w kadrze.
+   Na bieli poświaty nie widać wcale, więc po wylądowaniu w pasku gaśnie sama. */
+.intro-on.intro-out .znak img{
+  filter:blur(0px) drop-shadow(0 0 14px rgba(255,255,255,.95)) drop-shadow(0 0 30px rgba(255,255,255,.9));
+  transition:filter .16s linear;
+}
+/* Przelot do paska bierze spokojniejszą krzywą niż odsłona — logo ma dojechać,
+   a nie strzelić. */
+.intro-on.intro-out .znak{transform:none;transition:transform .72s cubic-bezier(.16,.84,.44,1)}
+/* Pomiar pozycji docelowej: skrypt na jedną klatkę zdejmuje przesunięcie. */
+.znak.mierze{transform:none!important;transition:none!important}
+
+@media (prefers-reduced-motion:reduce){
+  .intro-on #intro{display:none}
+  .intro-on body{overflow:auto}
+  .intro-on .znak,.intro-on .znak img{transform:none!important;transition:none!important;
+    filter:none!important;clip-path:none!important}
+  .intro-on .top{border-bottom-color:var(--linia)}
+  .intro-on .top .nawigacja,.intro-on .top .tel{opacity:1}
 }
