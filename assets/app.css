@@ -517,7 +517,7 @@ footer{border-top:2px solid var(--linia);margin-top:0;padding-block:var(--o5)}
 
 @media(max-width:760px){
   .kroki,.os-czasu{grid-template-columns:1fr}
-  .kroki > div,.os-czasu > div{padding:var(--o3) var(--o2)}
+  .kroki > div,.os-czasu > div{padding:28px var(--o2)}
   .spis a{grid-template-columns:52px 1fr;gap:6px var(--o2)}
   .spis a .mono:last-child{grid-column:2}
 }
